@@ -7,14 +7,22 @@ set -e
 BUILD_DIR=${1:-}
 CACHE_DIR=${2:-}
 ENV_DIR=${3:-}
-DIESEL_VERSION="*"
+DIESEL_VERSION=">= 0.1.0"
+
+mkdir -p "$CACHE_DIR/diesel_build"
+mkdir -p "$BUILD_DIR/bin"
 
 if [ -f "$BUILD_DIR/.diesel_version" ]; then
   DIESEL_VERSION=$(cat "$BUILD_DIR/.diesel_version" | tr -d "\n")
+  if cmp --silent "$BUILD_DIR/.diesel_version" "$CACHE_DIR/.diesel_version"; then
+    if [ -f "$CACHE_DIR/diesel_build/bin/diesel" ]; then
+      mv "$CACHE_DIR/diesel_build/bin/diesel" "$BUILD_DIR/bin/diesel"
+      exit 0
+    fi
+  fi
+  cp "$BUILD_DIR/.diesel_version" "$CACHE_DIR/.diesel_version"
 fi
 
-mkdir diesel_build
-cargo install diesel_cli --no-default-features --features postgres --vers "$DIESEL_VERSION" --root diesel_build
+cargo install diesel_cli --no-default-features --features postgres --vers "$DIESEL_VERSION" --root "$CACHE_DIR/diesel_build" --force
 
-mkdir -p "$BUILD_DIR/bin"
-mv diesel_build/bin/diesel "$BUILD_DIR/bin/diesel"
+cp "$CACHE_DIR/diesel_build/bin/diesel" "$BUILD_DIR/bin/diesel"
