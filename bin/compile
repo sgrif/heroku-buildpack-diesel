@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 # Find all the directories we might need (based on
 # heroku-buildpack-nodejs code).
 BUILD_DIR=${1:-}
@@ -12,7 +14,7 @@ if [ -f "$BUILD_DIR/.diesel_version" ]; then
 fi
 
 mkdir diesel_build
-cargo install diesel_cli --no-default-features --features postgres --vers $DIESEL_VERSION --root diesel_build
+cargo install diesel_cli --no-default-features --features postgres --vers "$DIESEL_VERSION" --root diesel_build
 
 mkdir -p "$BUILD_DIR/bin"
 mv diesel_build/bin/diesel "$BUILD_DIR/bin/diesel"
