@@ -16,7 +16,7 @@ if [ -f "$BUILD_DIR/.diesel_version" ]; then
   DIESEL_VERSION=$(cat "$BUILD_DIR/.diesel_version" | tr -d "\n")
   if cmp --silent "$BUILD_DIR/.diesel_version" "$CACHE_DIR/.diesel_version"; then
     if [ -f "$CACHE_DIR/diesel_build/bin/diesel" ]; then
-      mv "$CACHE_DIR/diesel_build/bin/diesel" "$BUILD_DIR/bin/diesel"
+      cp "$CACHE_DIR/diesel_build/bin/diesel" "$BUILD_DIR/bin/diesel"
       exit 0
     fi
   fi
